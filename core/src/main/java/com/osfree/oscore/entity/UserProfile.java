@@ -39,7 +39,7 @@ import javax.persistence.*;
 @SuperBuilder
 public class UserProfile extends BaseEntity {
 
-    @Column(name = "external_id", nullable = false)
+    @Column(name = "external_id", nullable = false, unique = true)
     private String externalId;
 
     @Column(name = "first_name", nullable = false, length = 55)
@@ -51,7 +51,7 @@ public class UserProfile extends BaseEntity {
     @Column(name = "last_name", nullable = false, length = 55)
     private String lastName;
 
-    @Column(name = "mobile_no")
+    @Column(name = "mobile_no", unique = true)
     private String mobileNo;
 
     @Column(name = "birth_date")

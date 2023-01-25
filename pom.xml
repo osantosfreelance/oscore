@@ -27,33 +27,25 @@
 	<properties>
 		<revision>0.0.1-SNAPSHOT</revision>
 		<java.version>11</java.version>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
 		<flatten.maven.plugin.version>1.2.4</flatten.maven.plugin.version>
 		<springdoc.version>1.6.14</springdoc.version>
 		<spring.security.oauth2.version>2.5.2.RELEASE</spring.security.oauth2.version>
 		<asgardeo.version>0.1.8</asgardeo.version>
+		<bucket4j.version>0.7.0</bucket4j.version>
+		<caffeine.version>3.1.2</caffeine.version>
 	</properties>
-
-	<distributionManagement>
-		<repository>
-			<id>osfree</id>
-			<url>packagecloud+https://packagecloud.io/osantosfreelance/osfree</url>
-		</repository>
-		<snapshotRepository>
-			<id>osfree</id>
-			<url>packagecloud+https://packagecloud.io/osantosfreelance/osfree</url>
-		</snapshotRepository>
-	</distributionManagement>
 
 	<repositories>
 		<repository>
-			<id>wso2.releases</id>
-			<name>WSO2 internal Repository</name>
-			<url>http://maven.wso2.org/nexus/content/repositories/releases/</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-				<checksumPolicy>ignore</checksumPolicy>
-			</releases>
+			<id>central</id>
+			<url>https://repo1.maven.org/maven2</url>
+		</repository>
+		<repository>
+			<id>oscore</id>
+			<name>GitHub osantosfreelance Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/osantosfreelance/oscore</url>
 		</repository>
 	</repositories>
 
@@ -88,11 +80,49 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>com.giffing.bucket4j.spring.boot.starter</groupId>
+			<artifactId>bucket4j-spring-boot-starter</artifactId>
+			<version>${bucket4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.cache</groupId>
+			<artifactId>cache-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+			<version>${caffeine.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>jcache</artifactId>
+			<version>${caffeine.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<profiles>
 		<profile>
 			<id>build-core</id>
+
+			<distributionManagement>
+				<repository>
+					<id>oscore</id>
+					<name>GitHub osantosfreelance Apache Maven Packages</name>
+					<url>https://maven.pkg.github.com/osantosfreelance/oscore</url>
+				</repository>
+				<snapshotRepository>
+					<id>oscore</id>
+					<name>GitHub osantosfreelance Apache Maven Packages</name>
+					<url>https://maven.pkg.github.com/osantosfreelance/oscore</url>
+				</snapshotRepository>
+			</distributionManagement>
+
 			<build>
 				<plugins>
 					<plugin>
@@ -152,13 +182,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<extensions>
-			<extension>
-				<groupId>io.packagecloud.maven.wagon</groupId>
-				<artifactId>maven-packagecloud-wagon</artifactId>
-				<version>0.0.6</version>
-			</extension>
-		</extensions>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>

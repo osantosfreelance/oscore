@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .csrf(CsrfConfigurer::disable)
                 .sessionManagement(SessionManagementConfigurer::disable)
                 .authorizeRequests(auth ->
-                        auth.antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                        auth.antMatchers(securityPropertyConfig.getIgnoringArray())
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated())
@@ -52,20 +52,6 @@ public class SecurityConfig {
                     customizer.setJWSTypeVerifier(new DefaultJOSEObjectTypeVerifier<>(new JOSEObjectType("at+jwt")));
                 })
                 .build();
-    }
-
-    // Used by Spring Security if CORS is enabled.
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin(securityPropertyConfig.getAllowedOrigin());
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("GET, POST, PUT, DELETE, OPTIONS");
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
     }
 
     @Bean

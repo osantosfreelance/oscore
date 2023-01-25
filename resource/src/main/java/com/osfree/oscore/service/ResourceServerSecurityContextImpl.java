@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.introspection.SpringOpaqueTokenIntrospector;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,8 @@ public class ResourceServerSecurityContextImpl implements PlatformSecurityContex
 
         if (context != null) {
             final Authentication auth = context.getAuthentication();
-            if (auth != null && auth.getPrincipal() != null) {
-                val principal = ((Jwt)context.getAuthentication().getPrincipal());
+            if (auth != null && auth.getPrincipal() != null && auth instanceof JwtAuthenticationToken) {
+                val principal = ((Jwt) context.getAuthentication().getPrincipal());
                 currentUserProfile = userProfileService.findByExternalId(principal.getSubject());
 
                 if (currentUserProfile == null) {
@@ -79,15 +80,16 @@ public class ResourceServerSecurityContextImpl implements PlatformSecurityContex
 
         if (context != null) {
             final Authentication auth = context.getAuthentication();
-            if (auth != null && auth.getPrincipal() != null) {
-                val principal = ((Jwt)context.getAuthentication().getPrincipal());
-
+            if (auth != null && auth.getPrincipal() != null && auth instanceof Jwt) {
                 try {
+                    val principal = ((Jwt) context.getAuthentication().getPrincipal());
                     springOpaqueTokenIntrospector.introspect(principal.getTokenValue());
-                } catch (Exception e) {
-                    throw new UnauthenticatedUserException();
+                } finally {
+                    return;
                 }
             }
+            throw new UnauthenticatedUserException();
         }
+
     }
 }

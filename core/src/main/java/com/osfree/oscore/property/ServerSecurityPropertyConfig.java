@@ -23,6 +23,8 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * 
  * @author JunMinon
@@ -40,5 +42,9 @@ public class ServerSecurityPropertyConfig {
 	private String introspectionUri;
 	private String clientId;
 	private String clientSecret;
+	private List<String> ignoring;
 
+	public String[] getIgnoringArray() {
+		return ignoring.toArray(new String[0]);
+	}
 }

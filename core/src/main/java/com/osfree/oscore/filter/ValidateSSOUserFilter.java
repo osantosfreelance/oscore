@@ -1,5 +1,6 @@
 package com.osfree.oscore.filter;
 
+import com.osfree.oscore.exception.UnauthenticatedUserException;
 import com.osfree.oscore.service.PlatformSecurityContext;
 import com.osfree.oscore.service.UserProfileService;
 import lombok.AllArgsConstructor;
@@ -36,28 +37,29 @@ public class ValidateSSOUserFilter implements Filter {
         final StopWatch task = new StopWatch();
         task.start();
 
-        platformSecurityContext.validateToken();
-
         try {
-
-            // Create Local User Profile for new SSO Users
-            val authenticatedUser = platformSecurityContext.loadAuthenticatedUser();
-
-            if (authenticatedUser.getId() == null) {
-                userProfileService.save(authenticatedUser);
-            }
 
             if (!"OPTIONS".equalsIgnoreCase(request.getMethod())) {
 
-                String userIp = request.getRemoteAddr();
+                platformSecurityContext.validateToken();
 
-                log.debug("Proceed to next filter chain...");
-                
-                chain.doFilter(request, response);
+                // Create Local User Profile for new SSO Users
+                val authenticatedUser = platformSecurityContext.loadAuthenticatedUser();
+
+                if (authenticatedUser.getId() == null) {
+                    userProfileService.save(authenticatedUser);
+                }
                 
             }
             
+        } catch (final UnauthenticatedUserException exception) {
+            log.info("No Authorization found. User Sync will be skipped.");
+
         } finally {
+
+            log.debug("Proceed to next filter chain...");
+
+            chain.doFilter(request, response);
                 
             task.stop();
             
