@@ -40,7 +40,7 @@ public class SecurityConfig {
                                 .anyRequest()
                                 .authenticated())
                 .oauth2ResourceServer()
-                .jwt();
+                .opaqueToken();
         return http.build();
     }
 
@@ -52,12 +52,6 @@ public class SecurityConfig {
                     customizer.setJWSTypeVerifier(new DefaultJOSEObjectTypeVerifier<>(new JOSEObjectType("at+jwt")));
                 })
                 .build();
-    }
-
-    @Bean
-    public SpringOpaqueTokenIntrospector springOpaqueTokenIntrospector() {
-        return new SpringOpaqueTokenIntrospector(securityPropertyConfig.getIntrospectionUri(),
-                securityPropertyConfig.getClientId(), securityPropertyConfig.getClientSecret());
     }
 
 }

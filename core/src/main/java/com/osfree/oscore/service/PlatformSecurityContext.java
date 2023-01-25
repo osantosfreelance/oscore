@@ -44,7 +44,5 @@ public interface PlatformSecurityContext {
 	 * Validates the if Accessing User has rights to view User's of specific roles
 	 */
 	void validateAccess(final List<Long> roles);
-
-	void validateToken();
     
 }

@@ -48,17 +48,6 @@ public class CustomCorsFilter implements Filter {
 
             if (!"OPTIONS".equalsIgnoreCase(request.getMethod())) {
 
-                /*String userIp = request.getRemoteAddr();
-
-                if (null != userIp && !"".equalsIgnoreCase(userIp)
-                        && null != securityPropertyConfig.getWhitelist() && !"".equalsIgnoreCase(securityPropertyConfig.getWhitelist())) {
-                    List<String> whiteList = Arrays.stream(securityPropertyConfig.getWhitelist().replace(" ", "").split(",")).collect(Collectors.toList());
-
-                    if (!whiteList.contains(userIp)) {
-                        throw new NonWhiteListException(userIp);
-                    }
-                }*/
-
                 log.debug("Proceed to next filter chain...");
                 
                 chain.doFilter(request, response);

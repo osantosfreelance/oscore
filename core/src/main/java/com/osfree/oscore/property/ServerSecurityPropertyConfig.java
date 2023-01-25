@@ -38,10 +38,6 @@ import java.util.List;
 public class ServerSecurityPropertyConfig {
 
 	private String allowedOrigin;
-	private String jwtKey;
-	private String introspectionUri;
-	private String clientId;
-	private String clientSecret;
 	private List<String> ignoring;
 
 	public String[] getIgnoringArray() {

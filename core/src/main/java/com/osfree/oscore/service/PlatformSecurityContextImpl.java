@@ -8,8 +8,10 @@ import lombok.val;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.introspection.BadOpaqueTokenException;
+import org.springframework.security.oauth2.server.resource.introspection.SpringOpaqueTokenIntrospector;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +19,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 @Log4j2
-public class ClientServerSecurityContextImpl implements PlatformSecurityContext {
+public class PlatformSecurityContextImpl implements PlatformSecurityContext {
 
+    private final SpringOpaqueTokenIntrospector springOpaqueTokenIntrospector;
     private final UserProfileService userProfileService;
 
     @Override
@@ -29,17 +32,9 @@ public class ClientServerSecurityContextImpl implements PlatformSecurityContext 
 
         if (context != null) {
             final Authentication auth = context.getAuthentication();
-            if (auth != null && auth.getPrincipal() != null) {
-                val principal = (DefaultOidcUser) auth.getPrincipal();
+            if (auth != null && auth.getPrincipal() != null && auth instanceof JwtAuthenticationToken) {
+                val principal = ((Jwt) context.getAuthentication().getPrincipal());
                 currentUserProfile = userProfileService.findByExternalId(principal.getSubject());
-
-                if (currentUserProfile == null) {
-                    currentUserProfile = UserProfile.builder()
-                            .externalId(principal.getSubject())
-                            .firstName(principal.getClaim("given_name"))
-                            .lastName(principal.getClaim("family_name"))
-                            .build();
-                }
             }
         }
 
@@ -69,9 +64,5 @@ public class ClientServerSecurityContextImpl implements PlatformSecurityContext 
 		if (!loginUser.getRole().getCreatableRoles().stream().map(Role::getId).collect(Collectors.toList()).containsAll(roles)) {
 			throw new InvalidAccessException(loginUser.getUsername());
 		}*/
-    }
-
-    @Override
-    public void validateToken() {
     }
 }
