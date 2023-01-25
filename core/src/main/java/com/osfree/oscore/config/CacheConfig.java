@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
  * @author osantos
  *
  */
-@Configuration
-@EnableCaching
+//@Configuration
+//@EnableCaching
 public class CacheConfig {
 
 }
